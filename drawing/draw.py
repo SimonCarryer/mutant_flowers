@@ -1,42 +1,64 @@
 import turtle
 import random
+import time
+from .util import *
 
 
-def copy_turtle(t):
-    t = t.clone()
-    t.hideturtle()
-    return t
-
-
-def init_turtle():
-    t = turtle.Turtle()
-    t.left(90)
-    turtle.colormode(255)
-    t.pencolor((40, 20, 0))
-    t.width(5)
-    t.hideturtle()
-    return t
-
-
-pallette = {0: "#507667", 1: "#ffd0ca", 2: "#fe9578", 3: "#eacf0e", 4: "#ada990"}
-
-
-def lookup_colour(colour):
-    return pallette[colour % (len(pallette) - 1)]
-
-
-def interpret_output(t, forward, turn, width, colour):
+def interpret_output(t, forward, turn, width, colour, highlight=True):
     try:
         width_ = t.width()
-        t.width(min(max(width_ + width, 0), 8))
-        t.pencolor(lookup_colour(colour))
+        t.width(min(max(width_ + width, 2), 18))
+        c = lookup_colour(colour)
+        t2 = copy_turtle(t)
+        t2.setx(t.xcor() + 3)
+        t.pencolor(darken(c))
         t.left(turn)
         t.forward(forward)
+        t2.pencolor(c)
+        t2.left(turn)
+        t2.forward(forward)
         return t
     except:
         return None
 
 
-def prune_turtles(turtles):
-    random.shuffle(turtles)
-    return turtles[:36]
+def draw_from_function(func, start=(0, 0), incremental=True):
+    turtle.hideturtle()
+    turtle.tracer(0, 0)
+    t = init_turtle(start)
+    write_function_name(func.__name__, start)
+    turtles = [t]
+    gen = 0
+    while len(turtles) > 0:
+        new_turtles = []
+        for t in turtles:
+            if gen < 10 and t is not None:
+                output = func(gen)
+                for forward, turn, width, rgb in output:
+                    new_turtles += [
+                        interpret_output(copy_turtle(t), forward, turn, width, rgb)
+                    ]
+        turtles = prune_turtles(new_turtles)
+        if incremental:
+            turtle.update()
+            # time.sleep(0.2)
+        gen += 1
+    if not incremental:
+        turtle.getscreen().update()
+        time.sleep(1)
+    for t in turtle.getscreen().turtles():
+        del t
+
+
+def draw_highlight(t, forward, turn, width, colour):
+    try:
+        width_ = t.width() - 3
+        if width_ > 0:
+            t.sety(t.ycor() - 0.2)
+            t.width(min(max(width_ + width, 1), 12))
+            c = lighten(lookup_colour(colour))
+            t.pencolor(c)
+            t.left(turn)
+            t.forward(forward + 0.2)
+    except:
+        pass
