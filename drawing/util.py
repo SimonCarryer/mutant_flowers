@@ -59,5 +59,11 @@ def clear_screen():
 
 
 def fill_background():
-    turtle.getscreen().colormode(255)
     turtle.getscreen().bgcolor(hex_to_rgb(pallette[len(pallette) - 1]))
+
+
+def set_up_screen():
+    turtle.getscreen().setup(width=800, height=800, startx=0, starty=0)
+    turtle.setworldcoordinates(0, 0, 800, 800)
+    turtle.getscreen().tracer(0, 0)
+    turtle.getscreen().colormode(255)

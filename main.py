@@ -1,15 +1,18 @@
 import time
 import turtle
 from drawing.draw import draw_from_function
-from drawing.util import write_function_name, clear_screen, fill_background
+from drawing.util import (
+    write_function_name,
+    clear_screen,
+    fill_background,
+    set_up_screen,
+)
 from breed.babies import make_babies
 from plants.plants import tree, flower
 
 
 if __name__ == "__main__":
-    turtle.getscreen().setup(width=800, height=800, startx=0, starty=0)
-    turtle.setworldcoordinates(0, 0, 800, 800)
-    turtle.getscreen().tracer(0, 0)
+    set_up_screen()
     # fill_background()
     xs = range(80, 800, 200)
     ys = range(600, 0, -250)
