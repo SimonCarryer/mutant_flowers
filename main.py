@@ -25,4 +25,3 @@ if __name__ == "__main__":
         # clear_screen()
         # fill_background()
         draw_from_function(func, start=start, incremental=True)
-    turtle.getscreen().getcanvas().postscript(file="images/flowers.eps")
