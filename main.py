@@ -8,7 +8,7 @@ from drawing.util import (
     set_up_screen,
 )
 from breed.babies import make_babies
-from plants.plants import tree, flower
+from plants.plants import tree, daisy, cyclamen, foxglove
 
 
 if __name__ == "__main__":
@@ -17,12 +17,12 @@ if __name__ == "__main__":
     xs = range(80, 800, 200)
     ys = range(600, 0, -250)
     coords = [(x, y) for y in ys for x in xs]
-    for func, start in zip([tree, flower], coords):
+    for func, start in zip([daisy, foxglove], coords):
         # clear_screen()
         # fill_background()
         draw_from_function(func, start=start, incremental=True)
-    for func, start in zip(make_babies(tree, flower), coords[2:]):
+    for func, start in zip(make_babies(daisy, foxglove), coords[2:]):
         # clear_screen()
         # fill_background()
         draw_from_function(func, start=start, incremental=True)
-    time.sleep(2)
+    time.sleep(5)
