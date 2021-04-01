@@ -12,11 +12,15 @@ def interpret_output(t, forward, turn, width, colour, highlight=True):
         t2 = copy_turtle(t)
         t2.setx(t.xcor() + 3)
         t.pencolor(darken(c))
+        t.pendown()
         t.left(turn)
         t.forward(forward)
+        t.penup()
+        t2.pendown()
         t2.pencolor(c)
         t2.left(turn)
         t2.forward(forward)
+        t2.penup()
         return t
     except:
         return None
@@ -46,8 +50,6 @@ def draw_from_function(func, start=(0, 0), incremental=True):
     if not incremental:
         turtle.getscreen().update()
         time.sleep(1)
-    for t in turtle.getscreen().turtles():
-        del t
 
 
 def draw_highlight(t, forward, turn, width, colour):

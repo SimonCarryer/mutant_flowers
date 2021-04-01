@@ -7,6 +7,7 @@ pallette = {0: "#ada990", 1: "#ffd0ca", 2: "#fe9578", 3: "#eacf0e", 4: "#507667"
 def copy_turtle(t):
     t = t.clone()
     t.hideturtle()
+    t.penup()
     return t
 
 
@@ -14,7 +15,6 @@ def init_turtle(start):
     t = turtle.Turtle()
     t.penup()
     t.setpos(start)
-    t.pendown()
     t.left(90)
     t.width(5)
     t.hideturtle()
@@ -23,7 +23,7 @@ def init_turtle(start):
 
 def prune_turtles(turtles):
     random.shuffle(turtles)
-    return turtles[:36]
+    return turtles[:30]
 
 
 def lookup_colour(colour):
