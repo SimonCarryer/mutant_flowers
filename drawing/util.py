@@ -23,7 +23,7 @@ def init_turtle(start):
 
 def prune_turtles(turtles):
     random.shuffle(turtles)
-    return turtles[:30]
+    return turtles[:28]
 
 
 def lookup_colour(colour):

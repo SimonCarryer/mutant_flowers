@@ -1,2 +1,5 @@
 *.ipynb
 *.pyc
+env_39/*
+.python-version
+.vscode

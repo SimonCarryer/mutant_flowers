@@ -8,7 +8,7 @@ def interpret_output(t, forward, turn, width, colour, highlight=True):
     try:
         width_ = t.width()
         t.width(min(max(width_ + width, 2), 18))
-        c = lookup_colour(colour)
+        c = lookup_colour(int(colour))
         t2 = copy_turtle(t)
         t2.setx(t.xcor() + 3)
         t.pencolor(darken(c))
@@ -21,9 +21,9 @@ def interpret_output(t, forward, turn, width, colour, highlight=True):
         t2.left(turn)
         t2.forward(forward)
         t2.penup()
-        return t
-    except:
+    except TypeError:
         return None
+    return t
 
 
 def draw_from_function(func, start=(0, 0), incremental=True):

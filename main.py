@@ -7,15 +7,15 @@ from drawing.util import (
     fill_background,
     set_up_screen,
 )
-from breed.babies import make_babies
+from breed.babies import BabyMaker
 from plants.plants import tree, daisy, cyclamen, foxglove
 
 
-def draw_functions(f1, f2):
+def draw_functions(maker, f1, f2):
     xs = range(80, 800, 200)
     ys = range(600, 0, -250)
     coords = [(x, y) for y in ys for x in xs]
-    funcs = list(make_babies(f1, f2))
+    funcs = list(maker.make_babies(f1, f2))
     for func, start in zip([f1, f2], coords):
         draw_from_function(func, start=start, incremental=True)
     for func, start in zip(funcs, coords[2:]):
@@ -24,13 +24,16 @@ def draw_functions(f1, f2):
 
 
 if __name__ == "__main__":
-    f1 = daisy
-    f2 = foxglove
+    maker = BabyMaker()
+    f1 = foxglove
+    f2 = daisy
     set_up_screen()
-    funcs = draw_functions(f1, f2)
-    print("choice 1")
-    f1 = funcs[int(input())]
-    print("choice 2")
-    f2 = funcs[int(input())]
-    turtle.getscreen().clear()
-    draw_functions(f1, f2)
+    funcs = draw_functions(maker, f1, f2)
+    while True:
+        print("choice 1")
+        f1 = funcs[int(input())]
+        print("choice 2")
+        f2 = funcs[int(input())]
+        turtle.getscreen().clear()
+        set_up_screen()
+        funcs = draw_functions(maker, f1, f2)
