@@ -1,14 +1,26 @@
 import random
 import ast
-from string import ascii_lowercase
+from string import ascii_lowercase, digits
 
 
 def clean_name(name):
-    return "".join([c for c in name if c in ascii_lowercase])
+    name = "".join([c for c in name if c in ascii_lowercase])
+    numbers = "".join([c for c in name if c in digits])
+    return name, numbers
 
 
 def combine_names(name1, name2, idx):
-    return "_".join([clean_name(name1), clean_name(name2), str(idx)])
+    name1, numbers1 = clean_name(name1)
+    name2, numbers2 = clean_name(name2)
+    if name1 == name2:
+        name = name1
+    else:
+        name = "_".join(sorted([name1, name2]))
+    if numbers1 == numbers2:
+        numbers = numbers1
+    else:
+        numbers = "-".join(sorted([numbers1, numbers2]))
+    return "_".join([name, numbers, str(idx)])
 
 
 def rename_function(parent_1, parent_2, new_function, idx):

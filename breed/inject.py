@@ -2,31 +2,7 @@ from collections import defaultdict
 import random
 import ast
 
-classes = [
-    ast.Name,
-    ast.If,
-    ast.Compare,
-    ast.Constant,
-    ast.Expr,
-    ast.BinOp,
-    ast.Add,
-    ast.Mult,
-    ast.Eq,
-    ast.And,
-    ast.Or,
-    ast.Sub,
-    ast.NotEq,
-    ast.Lt,
-    ast.LtE,
-    ast.Gt,
-    ast.GtE,
-    ast.Is,
-    ast.IsNot,
-    ast.In,
-    ast.NotIn,
-    ast.Call,
-    ast.For,
-]
+target_fields = ["orelse", "body"]
 
 
 def inject(parent_1, parent_2):
@@ -44,14 +20,19 @@ def inject(parent_1, parent_2):
 class InjectCollector(ast.NodeVisitor):
     def __init__(self):
         super().__init__()
-        self.collected_nodes = []
-        self.classes = classes
+        self.collected_nodes = defaultdict(list)
+        self.target_fields = target_fields
 
     def generic_visit(self, node):
-        if hasattr(node, "body") and node.body.__class__ == list:
-            self.collected_nodes += [
-                n for n in node.body if n.__class__ in self.classes
-            ]
+        for field, contents in ast.iter_fields(node):
+            f = getattr(node, field)
+            if field in self.target_fields and len(f) > 0:
+                self.collected_nodes[field] += f
+        super().generic_visit(node)
+
+    def visit_FunctionDef(self, node):
+        if len(node.body) > 2:
+            self.collected_nodes["body"] += node.body[1:-1]
         super().generic_visit(node)
 
 
@@ -59,10 +40,13 @@ class InjectCounter(ast.NodeVisitor):
     def __init__(self, collected_nodes):
         super().__init__()
         self.count = 0
+        self.target_fields = target_fields
 
     def generic_visit(self, node):
-        if hasattr(node, "body") and node.body.__class__ == list:
-            self.count += 1
+        for field, contents in ast.iter_fields(node):
+            f = getattr(node, field)
+            if field in self.target_fields and len(f) > 0:
+                self.count += 1
         super().generic_visit(node)
 
 
@@ -71,14 +55,33 @@ class Injector(ast.NodeTransformer):
         super().__init__()
         self.collected_nodes = collected_nodes
         self.target_count = target_count
+        self.target_fields = target_fields
         self.count = 0
 
     def generic_visit(self, node):
-        if hasattr(node, "body") and node.body.__class__ == list:
-            self.count += 1
-            if self.count == self.target_count:
-                new_node = random.choice(self.collected_nodes)
-                node.body = node.body[:-1] + [new_node] + [node.body[-1]]
-                return node
+        for field, contents in ast.iter_fields(node):
+            f = getattr(node, field)
+            if field in self.target_fields and len(f) > 0:
+                self.count += 1
+                if self.count == self.target_count:
+                    new_node = random.choice(self.collected_nodes[field])
+                    contents = getattr(node, field)
+                    idx = random.randint(0, len(contents))
+                    new_contents = contents[:idx] + [new_node] + contents[idx:]
+                    setattr(node, field, new_contents)
+        super().generic_visit(node)
+        return node
+
+    def visit_FunctionDef(self, node):
+        for field, contents in ast.iter_fields(node):
+            f = getattr(node, field)
+            if field in self.target_fields and len(f) > 0:
+                self.count += 1
+                if self.count == self.target_count:
+                    new_node = random.choice(self.collected_nodes[field])
+                    contents = getattr(node, field)
+                    idx = random.randint(1, len(contents) - 1)
+                    new_contents = contents[:idx] + [new_node] + contents[idx:]
+                    setattr(node, field, new_contents)
         super().generic_visit(node)
         return node

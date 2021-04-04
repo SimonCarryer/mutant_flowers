@@ -64,7 +64,6 @@ class ReferenceFixer(ast.NodeTransformer):
         if node.ctx.__class__ == ast.Store:
             assigned_names.append(node.id)
         elif node.ctx.__class__ == ast.Load and node.id not in assigned_names:
-            print(f"fixing {node.id}!")
             node.id = random.choice(assigned_names)
         self.generic_visit(node, assigned_names)
         return node

@@ -23,7 +23,7 @@ def regulate(output):
 def regulate_colour(colour):
     try:
         return colour % len(pallette)
-    except ValueError:
+    except (ValueError, TypeError):
         return 0
 
 
@@ -32,7 +32,7 @@ def regulate_forward(forward):
         forward = abs(forward)
         x = 5
         return math.log(forward * x) * math.log(forward * x)
-    except ValueError:
+    except (ValueError, TypeError):
         return 5
 
 
@@ -46,8 +46,7 @@ def regulate_turn(turn):
 def regulate_width(width):
     try:
         return int(width)
-    except ValueError:
-        print("hey!")
+    except (ValueError, TypeError):
         return 2
 
 

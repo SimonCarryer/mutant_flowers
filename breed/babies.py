@@ -6,6 +6,8 @@ from breed.inject import inject
 from breed.rename import rename_function, NameGetter
 from breed.mutate import mutate
 from breed.prune import prune
+from breed.fix_references import fix_references
+from breed.fix_empty_node_bodies import fix_empty_node_bodies
 
 
 class FunctionConverter:
@@ -35,18 +37,28 @@ class FunctionConverter:
 
 
 class BabyMaker:
-    def __init__(self):
+    def __init__(self, inject=True, crossover=True, mutate=True, prune=True):
+        self.inject = inject
+        self.crossover = crossover
+        self.mutate = mutate
+        self.prune = prune
         self.function_converter = FunctionConverter()
 
     def make_baby(self, parent_1, parent_2, name_idx=0):
         parent_1 = self.function_converter.function_to_ast(parent_1)
         parent_2 = self.function_converter.function_to_ast(parent_2)
         parent_1, parent_2 = random.sample([parent_1, parent_2], 2)
-        inject(parent_1, parent_2)
-        crossover(parent_1, parent_2)
+        if self.inject:
+            inject(parent_1, parent_2)
+        if self.crossover:
+            crossover(parent_1, parent_2)
         new_ast = rename_function(parent_1, parent_2, parent_2, name_idx)
-        prune(new_ast)
-        mutate(new_ast)
+        if self.prune:
+            prune(new_ast)
+        if self.mutate:
+            mutate(new_ast)
+        fix_references(new_ast)
+        fix_empty_node_bodies(new_ast)
         return self.function_converter.ast_to_function(new_ast)
 
     def make_babies(self, parent_1, parent_2, n_babies=10):
