@@ -27,7 +27,7 @@ def prune_turtles(turtles):
 
 
 def lookup_colour(colour):
-    value = pallette[colour % (len(pallette) - 1)]
+    value = pallette[colour]
     return hex_to_rgb(value)
 
 
@@ -51,6 +51,7 @@ def write_function_name(name, position):
     t.penup()
     t.goto(position[0], position[1] - 45)
     t.write(name, font=("Consolas", 16, "normal"), align="center")
+    t.penup()
 
 
 def clear_screen():
@@ -63,7 +64,10 @@ def fill_background():
 
 
 def set_up_screen():
+    turtle.getscreen().clear()
     turtle.getscreen().setup(width=800, height=800, startx=0, starty=0)
     turtle.setworldcoordinates(0, 0, 800, 800)
     turtle.getscreen().tracer(0, 0)
     turtle.getscreen().colormode(255)
+    for t in turtle.getscreen().turtles():
+        t.reset()

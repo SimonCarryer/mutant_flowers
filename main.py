@@ -25,7 +25,7 @@ def draw_functions(maker, f1, f2):
 
 if __name__ == "__main__":
     maker = BabyMaker()
-    f1 = foxglove
+    f1 = cyclamen
     f2 = daisy
     set_up_screen()
     funcs = draw_functions(maker, f1, f2)
@@ -34,6 +34,8 @@ if __name__ == "__main__":
         f1 = funcs[int(input())]
         print("choice 2")
         f2 = funcs[int(input())]
+        print(maker.function_converter.source_for_function(f1))
+        print(maker.function_converter.source_for_function(f2))
         turtle.getscreen().clear()
         set_up_screen()
         funcs = draw_functions(maker, f1, f2)

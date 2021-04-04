@@ -73,8 +73,20 @@ class CrossPollinator(ast.NodeTransformer):
         self.target_count = target_count
         self.count = 0
 
+    def visit_Name(self, node):
+        if ast.Name in self.classes:
+            self.count += 1
+            if self.count == self.target_count:
+                new_node = random.choice(
+                    [n for n in self.collected_nodes if n.__class__ == ast.Name]
+                )
+                new_node.ctx = node.ctx
+                node = new_node
+        super().generic_visit(node)
+        return node
+
     def generic_visit(self, node):
-        if node.__class__ in self.classes:
+        if node.__class__ in self.classes and node.__class__ != ast.Name:
             self.count += 1
             if self.count == self.target_count:
                 new_node = random.choice(

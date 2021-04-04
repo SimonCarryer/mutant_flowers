@@ -1,8 +1,8 @@
 import ast
 import random
 
-classes = [ast.Constant, ast.BinOp, ast.Compare]
-operators = [ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Mod, ast.Pow]
+classes = [ast.Constant, ast.BinOp, ast.Compare, ast.Name]
+operators = [ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Mod]
 comparitors = [
     ast.Eq,
     ast.NotEq,
@@ -17,8 +17,9 @@ def mutate(child):
     counter = MutateCounter()
     counter.visit(child)
     target = random.randint(0, counter.count)
-    mutator = Mutator(target)
+    mutator = Mutator(target, counter.names)
     mutator.visit(child)
+    ast.fix_missing_locations(child)
     return child
 
 
@@ -26,7 +27,12 @@ class MutateCounter(ast.NodeVisitor):
     def __init__(self):
         super().__init__()
         self.classes = classes
+        self.names = []
         self.count = 0
+
+    def visit_Name(self, node):
+        self.names.append(node.id)
+        self.generic_visit(node)
 
     def generic_visit(self, node):
         if node.__class__ in self.classes:
@@ -35,8 +41,9 @@ class MutateCounter(ast.NodeVisitor):
 
 
 class Mutator(ast.NodeTransformer):
-    def __init__(self, target_count):
+    def __init__(self, target_count, names):
         super().__init__()
+        self.names = names
         self.classes = classes
         self.target_count = target_count
         self.count = 0
@@ -61,13 +68,15 @@ class Mutator(ast.NodeTransformer):
         if self.count == self.target_count:
             value = node.value
             if value.__class__ == int:
-                roll = random.randint(0, 2)
+                roll = random.randint(0, 3)
                 if roll == 0:
                     node.value = value + 1
                 elif roll == 1:
                     node.value = value - 1
-                else:
+                elif roll == 2:
                     node.value = -value
+                else:
+                    node = ast.Name(id=random.choice(self.names), ctx=ast.Load())
         self.generic_visit(node)
         return node
 
@@ -82,4 +91,11 @@ class Mutator(ast.NodeTransformer):
                 new_ops.append(new_op())
             node.ops = new_ops
         self.generic_visit(node)
+        return node
+
+    def visit_Name(self, node):
+        if self.count == self.target_count:
+            node.id = random.choice([name for name in self.names if name != node.id])
+            self.count += 1
+        super().generic_visit(node)
         return node

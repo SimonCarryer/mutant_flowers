@@ -2,6 +2,7 @@ import turtle
 import random
 import time
 from .util import *
+from .regulate import regulate
 
 
 def interpret_output(t, forward, turn, width, colour, highlight=True):
@@ -37,7 +38,7 @@ def draw_from_function(func, start=(0, 0), incremental=True):
         new_turtles = []
         for t in turtles:
             if gen < 10 and t is not None:
-                output = func(gen)
+                output = regulate(func(gen))
                 for forward, turn, width, rgb in output:
                     new_turtles += [
                         interpret_output(copy_turtle(t), forward, turn, width, rgb)
@@ -45,7 +46,6 @@ def draw_from_function(func, start=(0, 0), incremental=True):
         turtles = prune_turtles(new_turtles)
         if incremental:
             turtle.update()
-            # time.sleep(0.2)
         gen += 1
     if not incremental:
         turtle.getscreen().update()

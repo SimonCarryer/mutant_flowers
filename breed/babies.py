@@ -1,9 +1,11 @@
 import ast
 import inspect
+import random
 from breed.crossover import crossover
 from breed.inject import inject
 from breed.rename import rename_function, NameGetter
 from breed.mutate import mutate
+from breed.prune import prune
 
 
 class FunctionConverter:
@@ -39,10 +41,11 @@ class BabyMaker:
     def make_baby(self, parent_1, parent_2, name_idx=0):
         parent_1 = self.function_converter.function_to_ast(parent_1)
         parent_2 = self.function_converter.function_to_ast(parent_2)
-        original = ast.dump(parent_2)
+        parent_1, parent_2 = random.sample([parent_1, parent_2], 2)
         inject(parent_1, parent_2)
         crossover(parent_1, parent_2)
         new_ast = rename_function(parent_1, parent_2, parent_2, name_idx)
+        prune(new_ast)
         mutate(new_ast)
         return self.function_converter.ast_to_function(new_ast)
 
