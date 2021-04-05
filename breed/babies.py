@@ -48,14 +48,14 @@ class BabyMaker:
         parent_1 = self.function_converter.function_to_ast(parent_1)
         parent_2 = self.function_converter.function_to_ast(parent_2)
         parent_1, parent_2 = random.sample([parent_1, parent_2], 2)
-        if self.inject:
+        if self.inject > random.random():
             inject(parent_1, parent_2)
-        if self.crossover:
+        if self.crossover > random.random():
             crossover(parent_1, parent_2)
         new_ast = rename_function(parent_1, parent_2, parent_2, name_idx)
-        if self.prune:
+        if self.prune > random.random():
             prune(new_ast)
-        if self.mutate:
+        if self.mutate > random.random():
             mutate(new_ast)
         fix_references(new_ast)
         fix_empty_node_bodies(new_ast)

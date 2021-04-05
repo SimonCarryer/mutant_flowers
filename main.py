@@ -24,8 +24,8 @@ def draw_functions(maker, f1, f2):
 
 
 if __name__ == "__main__":
-    maker = BabyMaker(prune=False, mutate=False)
-    f1 = tree
+    maker = BabyMaker(prune=0.8, mutate=0.5)
+    f1 = foxglove
     f2 = daisy
     set_up_screen()
     funcs = draw_functions(maker, f1, f2)
