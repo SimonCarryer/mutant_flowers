@@ -24,18 +24,8 @@ def draw_functions(maker, f1, f2):
 
 
 if __name__ == "__main__":
-    maker = BabyMaker(prune=0.5, mutate=0.5, inject=1, crossover=1)
-    f1 = tree
-    f2 = daisy
+    f1 = generated_flower
     set_up_screen()
-    funcs = draw_functions(maker, f1, f2)
+    draw_from_function(f1, start=(400, 0), incremental=True)
     while True:
-        print("choice 1")
-        f1 = funcs[int(input())]
-        print("choice 2")
-        f2 = funcs[int(input())]
-        print(maker.function_converter.source_for_function(f1))
-        print(maker.function_converter.source_for_function(f2))
-        turtle.getscreen().clear()
-        set_up_screen()
-        funcs = draw_functions(maker, f1, f2)
+        pass

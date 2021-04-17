@@ -5,16 +5,15 @@ import ast
 target_fields = ["orelse", "body"]
 
 
-def inject(parent_1, parent_2):
+def inject(subject, donor):
     collector = InjectCollector()
-    collector.visit(parent_1)
+    collector.visit(donor)
     counter = InjectCounter(collector.collected_nodes)
-    counter.visit(parent_2)
+    counter.visit(subject)
     target = random.randint(0, counter.count)
     injector = Injector(collector.collected_nodes, target)
-    injector.visit(parent_2)
-    ast.fix_missing_locations(parent_2)
-    return parent_2
+    injector.visit(subject)
+    return subject
 
 
 class InjectCollector(ast.NodeVisitor):

@@ -5,7 +5,10 @@ from copy import copy
 
 def fix_references(child):
     fixer = ReferenceFixer()
-    fixer.visit(child, [])
+    try:
+        fixer.visit(child, [])
+    except RecursionError:
+        pass
     return child
 
 

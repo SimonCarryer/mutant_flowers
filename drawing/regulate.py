@@ -47,7 +47,7 @@ def regulate_width(width):
     try:
         return int(width)
     except (ValueError, TypeError):
-        return 2
+        return 3
 
 
 def keep_tuples(output):

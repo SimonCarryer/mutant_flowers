@@ -29,16 +29,15 @@ classes = [
 ]
 
 
-def crossover(parent_1, parent_2):
+def crossover(subject, donor):
     collector = CrossoverCollector()
-    collector.visit(parent_1)
+    collector.visit(donor)
     counter = CrossoverCounter(collector.collected_nodes)
-    counter.visit(parent_2)
+    counter.visit(subject)
     target = random.randint(0, counter.count)
     pollinator = CrossPollinator(collector.collected_nodes, target)
-    pollinator.visit(parent_2)
-    ast.fix_missing_locations(parent_2)
-    return parent_2
+    pollinator.visit(subject)
+    return subject
 
 
 class CrossoverCollector(ast.NodeVisitor):
@@ -73,18 +72,6 @@ class CrossPollinator(ast.NodeTransformer):
         self.target_count = target_count
         self.count = 0
 
-    def visit_Name(self, node):
-        if ast.Name in self.classes:
-            self.count += 1
-            if self.count == self.target_count:
-                new_node = random.choice(
-                    [n for n in self.collected_nodes if n.__class__ == ast.Name]
-                )
-                new_node.ctx = node.ctx
-                node = new_node
-        super().generic_visit(node)
-        return node
-
     def generic_visit(self, node):
         if node.__class__ in self.classes and node.__class__ != ast.Name:
             self.count += 1
@@ -96,6 +83,8 @@ class CrossPollinator(ast.NodeTransformer):
                         if new.__class__ == node.__class__
                     ]
                 )
+                if hasattr(new_node, "ctx"):
+                    new_node.ctx = node.ctx
                 return new_node
         super().generic_visit(node)
         return node

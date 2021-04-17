@@ -1,5 +1,6 @@
 import ast
 import random
+from copy import deepcopy
 
 classes = [ast.Constant, ast.BinOp, ast.Compare, ast.Name]
 operators = [ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Mod]
@@ -14,12 +15,19 @@ comparitors = [
 
 
 def mutate(child):
+    child = deepcopy(child)
     counter = MutateCounter()
     counter.visit(child)
     target = random.randint(0, counter.count)
     mutator = Mutator(target, counter.names)
     mutator.visit(child)
-    ast.fix_missing_locations(child)
+    return child
+
+
+def fix_functiondef(child, correct_args, defaults):
+    for idx, arg in enumerate(child.args.args):
+        arg.arg = correct_args[idx]
+    child.args.defaults = defaults
     return child
 
 
@@ -94,8 +102,10 @@ class Mutator(ast.NodeTransformer):
         return node
 
     def visit_Name(self, node):
+        self.count += 1
         if self.count == self.target_count:
-            node.id = random.choice([name for name in self.names if name != node.id])
-            self.count += 1
+            names = [name for name in self.names if name != node.id]
+            if len(names) > 0:
+                node.id = random.choice(names)
         super().generic_visit(node)
         return node
