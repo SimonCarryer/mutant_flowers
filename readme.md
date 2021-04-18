@@ -172,7 +172,7 @@ def daisy_tree__1(gen, forward=40, turn=0, width=4, colour=0):
 
 You can see here that the function has the branching structure of the `tree` function, `for i in range(2):`, but its also picked up the `daisy`'s `elif gen == 6:`. That gives its flower the appearance of a combination of the two functions.
 
-I thought it'd be fun to be able to choose some particularly nice flowers and bring them into a second generation, seeing if it bred even better combinations of the two functions. This was a mistake, as the functions tend to create eldrich sigils which summon elder beings.
+I thought it'd be fun to be able to choose some particularly nice flowers and bring them into a second generation, seeing if it bred even better combinations of the two functions. This was a mistake, as the functions tend to create eldritch sigils which summon elder beings.
 
 ![Sample Output](images/second_generation.png)
 
