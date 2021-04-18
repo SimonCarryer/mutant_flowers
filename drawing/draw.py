@@ -8,7 +8,7 @@ from .regulate import regulate
 def interpret_output(t, forward, turn, width, colour, highlight=True):
     try:
         width_ = t.width()
-        t.width(min(max(width_ + width, 3), 18))
+        t.width(min(max(width, 3), 18))
         c = lookup_colour(int(colour))
         t2 = copy_turtle(t)
         t2.setx(t.xcor() + 3)

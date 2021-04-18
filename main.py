@@ -8,7 +8,7 @@ from drawing.util import (
     set_up_screen,
 )
 from breed.babies import BabyMaker
-from plants.plants import tree, daisy, cyclamen, foxglove, generated_flower
+from plants.plants import tree, daisy, cyclamen, foxglove
 
 
 def draw_functions(maker, f1, f2):

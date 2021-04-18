@@ -3,7 +3,7 @@ import ast
 from string import ascii_lowercase
 
 names = ["gen", "forward", "turn", "width", "colour"]
-defaults = [40, 0, 0, 0]
+defaults = [40, 1, 3, 1]
 
 comparators = [
     ast.Eq,
@@ -85,7 +85,6 @@ def aug_assign(extra_vars=None):
 def expression(extra_vars=None):
     value = random.choice(
         [
-            append_tuple_to_output,
             append_tuple_to_output,
             aug_assign,
             build_if,

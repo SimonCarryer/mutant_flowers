@@ -33,22 +33,27 @@ class Breeder:
             fitnesses.append(self.fitness_function(outputs))
         return fitnesses
 
-    def tournament(self, functions, fitnesses):
+    def adjust_for_sizes(self, fitnesses, idxs, sizes):
+        adjust = max(fitnesses)
+        sizes = [(float(i) / sum(sizes)) * adjust for i in sizes]
+        tournament = [(fitnesses[idx] - sizes[idx], idx) for idx in idxs]
+        return tournament
+
+    def tournament(self, functions, fitnesses, sizes):
         idxs = random.sample(list(range(len(functions))), self.tournament_size)
-        tournament = [(fitnesses[idx], idx) for idx in idxs]
+        if sizes is not None:
+            tournament = self.adjust_for_sizes(fitnesses, idxs, sizes)
+        else:
+            tournament = [(fitnesses[idx], idx) for idx in idxs]
         winner = sorted(tournament, key=lambda x: x[0])[-1]
         return functions[winner[1]]
 
-    def choose_winners(self, functions, fitnesses):
+    def choose_winners(self, functions, fitnesses, sizes=None):
         winners = []
-        hall_of_fame = self.runs[-1].hall_of_fame
-        for _ in range(self.generation_size - len(hall_of_fame)):
-            winner = self.tournament(functions, fitnesses)
-            donor = self.tournament(functions, fitnesses)
+        for _ in range(self.generation_size):
+            winner = self.tournament(functions, fitnesses, sizes)
+            donor = self.tournament(functions, fitnesses, sizes)
             winners.append((winner, donor))
-        for champion in hall_of_fame:
-            winner = self.tournament(functions, fitnesses)
-            winners.append((winner, champion))
         return winners
 
     def initialise_run(self):
@@ -59,6 +64,7 @@ class Breeder:
 
     def breed(self):
         recorder = self.initialise_run()
+        print(f"Generating {self.starting_functions} random functions")
         initial_functions = list(self.maker.generate_functions(self.starting_functions))
         initial_fitnesses = self.fitness(initial_functions)
         recorder.record(initial_functions, initial_fitnesses, None)
@@ -67,13 +73,17 @@ class Breeder:
             functions = []
             all_stats = []
             for name_idx, (winner, donor) in enumerate(winners):
-                baby, stats = self.maker.make_baby(winner, donor, name_idx=name_idx)
+                baby, stats = self.maker.make_baby(
+                    winner, donor, name_idx="_".join([str(gen), str(name_idx)])
+                )
                 functions.append(baby)
                 all_stats.append(stats)
             functions = [func for func in functions if func is not None]
             fitnesses = self.fitness(functions)
-            winners = self.choose_winners(functions, fitnesses)
+            sizes = [s["size"] for s in all_stats]
+            winners = self.choose_winners(functions, fitnesses, sizes=sizes)
             recorder.record(functions, fitnesses, all_stats)
+            score = sum(fitnesses) / len(fitnesses)
             if self.stopping_fitness and score > self.stopping_fitness:
                 break
 
@@ -103,13 +113,17 @@ class RunRecord:
         self.hall_of_fame.append(best_function)
         self.stats.append(stats)
         self.fitnesses.append(fitnesses)
-        self.summaries.append(self.summarise_stats(stats, fitnesses))
-        self.report(fitnesses)
+        summary = self.summarise_stats(stats, fitnesses)
+        self.summaries.append(summary)
+        self.report(summary)
         self.generation += 1
 
-    def report(self, fitnesses):
-        score = sum(fitnesses) / len(fitnesses)
-        print(f"Average fitness for generation {self.generation} is {round(score, 2)}")
+    def report(self, summary):
+        fitness = round(summary["fitness"]["avg"], 2)
+        size = int(summary.get("size", {}).get("avg", 0))
+        print(
+            f"Average fitness for generation {self.generation} is {fitness} with an average size of {size} nodes."
+        )
 
     def best_function(self, functions, fitnesses):
         return functions[fitnesses.index(max(fitnesses))]
@@ -128,7 +142,7 @@ class RunRecord:
     def summarise_stats(self, stats, fitnesses):
         out = {}
         if stats is not None:
-            for stat in ["time", "parent_1_size", "parent_2_size", "failures"]:
+            for stat in ["time", "size", "failures"]:
                 ns = [s[stat] for s in stats]
                 out[stat] = self.summarise(ns)
         out["fitness"] = self.summarise(fitnesses)

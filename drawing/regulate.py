@@ -46,7 +46,7 @@ def regulate_turn(turn):
 def regulate_width(width):
     try:
         return int(width)
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, OverflowError):
         return 3
 
 

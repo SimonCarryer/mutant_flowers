@@ -48,6 +48,9 @@ class BabyMaker:
         self.function_converter = FunctionConverter()
         self.max_nodes = 800
 
+    def clear_functions(self):
+        self.function_converter = FunctionConverter()
+
     def generate_functions(self, n_functions):
         i = 0
         failures = 0
@@ -70,8 +73,7 @@ class BabyMaker:
         new_ast = rename_function(
             deepcopy(parent_1), deepcopy(parent_2), new_ast, name_idx
         )
-        ast_length = len(list(ast.walk(new_ast)))
-        if self.prune > random.random() or ast_length > self.max_nodes:
+        if self.prune > random.random():
             new_ast = prune(deepcopy(new_ast))
         if self.mutate > random.random():
             correct_args = [arg.arg for arg in new_ast.args.args]
@@ -84,29 +86,22 @@ class BabyMaker:
         return new_ast
 
     def make_baby(self, parent_1, parent_2, name_idx=0):
-        parent_1 = deepcopy(self.function_converter.function_to_ast(parent_1))
-        parent_2 = deepcopy(self.function_converter.function_to_ast(parent_2))
-        parent_1_size = len(list(ast.walk(parent_1)))
-        parent_2_size = len(list(ast.walk(parent_2)))
+        parent_1 = self.function_converter.function_to_ast(parent_1)
+        parent_2 = self.function_converter.function_to_ast(parent_2)
         start = perf_counter()
         baby = None
         failures = 0
         while baby is None and failures < 100:
             func = self.baby(deepcopy(parent_1), deepcopy(parent_2), name_idx=name_idx)
             try:
+                ast_length = len(list(ast.walk(func)))
                 func = self.function_converter.ast_to_function(func)
                 if all([func(i).__class__ == list for i in range(10)]):
                     baby = func
             except:
                 failures += 1
         end = perf_counter()
-        parent_1_size = len(list(ast.walk(parent_1)))
-        stats = {
-            "time": end - start,
-            "failures": failures,
-            "parent_1_size": parent_1_size,
-            "parent_2_size": parent_2_size,
-        }
+        stats = {"time": end - start, "failures": failures, "size": ast_length}
         return baby, stats
 
     def make_babies(self, parent_1, parent_2, n_babies=10):

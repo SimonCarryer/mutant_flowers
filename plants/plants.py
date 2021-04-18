@@ -1,4 +1,4 @@
-def tree(gen, forward=40, turn=0, width=0, colour=0):
+def tree(gen, forward=40, turn=0, width=4, colour=0):
     output = []
     if gen == 0:
         output.append((forward - (gen * 5), turn, 6, colour + 0))
@@ -8,14 +8,14 @@ def tree(gen, forward=40, turn=0, width=0, colour=0):
     return output
 
 
-def grass(gen, forward=40, turn=0, width=0, colour=0):
+def grass(gen, forward=40, turn=0, width=4, colour=0):
     output = []
     if gen < 5:
         output.append((forward - 30, turn + gen * 2, -1, colour + 0))
     return output
 
 
-def daisy(gen, forward=40, turn=0, width=0, colour=0):
+def daisy(gen, forward=40, turn=0, width=4, colour=0):
     output = []
     if gen <= 5:
         output.append((forward - 20, turn + gen * 2, width, colour + 0))
@@ -25,7 +25,7 @@ def daisy(gen, forward=40, turn=0, width=0, colour=0):
     return output
 
 
-def cyclamen(gen, forward=40, turn=0, width=0, colour=0):
+def cyclamen(gen, forward=40, turn=0, width=4, colour=0):
     output = []
     if gen == 0:
         for i in range(3):
@@ -38,52 +38,151 @@ def cyclamen(gen, forward=40, turn=0, width=0, colour=0):
     return output
 
 
-def foxglove(gen, forward=40, turn=0, width=0, colour=0):
+def foxglove(gen, forward=40, turn=0, width=4, colour=0):
     output = []
     if gen <= 1:
         output.append((forward - 20, turn + gen, width, colour + 0))
     elif gen == 2:
         output.append((forward - 20, turn + gen, width + 12, colour + 1))
     elif gen < 7:
-        output.append((forward - 20, turn + gen, -gen / 2, colour + 1))
+        output.append((forward - 20, turn + gen, 20 - (gen * 2), colour + 1))
     return output
 
 
-def first_generated_flower(gen, forward=40, turn=0, width=0, colour=0):
+def generated_flower(gen, forward=40, turn=4, width=3, colour=1):
     output = []
-    if gen > 3:
-        output.append((gen * 8, forward * 10, width * gen, colour + gen))
-        output.append((gen * 6, turn * 10, width - gen, colour - colour))
-        output.append((forward * 8, turn * 10, width - gen, colour + gen))
-        output.append((forward * 8, forward * 6, width - gen, colour + gen))
-        output.append((forward * 8, gen % 10, width - gen, colour + gen))
-        output.append((forward % 5, turn + 7, width / 40, colour - colour))
-        output.append((forward * 5, turn % forward, width / 4, colour - turn))
-    output.append((forward * 8, turn * 10, width - gen, colour + gen))
-    return output
-
-
-def generated_flower(gen, forward=40, turn=0, width=0, colour=0):
-    output = []
-    for h in range(gen):
-        output.append((forward * colour, turn - 3, width - turn, turn / 7))
-        output.append((forward - colour, turn + colour, turn - 3, width + width))
-        if turn <= 7:
+    if gen > 4:
+        output.append((forward * colour, turn - gen, width - colour, turn + gen))
+        output.append(
+            (forward % width, turn % forward, width - colour, colour / colour)
+        )
+        if gen > 4:
             output.append(
-                (colour + colour, turn / 8, forward - width, colour / forward)
+                (forward * colour, colour - forward, width * colour, colour / forward)
             )
-            if turn < 8:
-                output.append((forward / 1, turn * 0, width * 4, colour * 7))
+            output.append(
+                (forward % width, turn % forward, forward - width, colour + colour)
+            )
+            output.append(
+                (forward % width, turn % forward, width - turn, colour - colour)
+            )
+            if gen > 4:
                 output.append(
-                    (width - turn, turn / forward, width + colour, colour * 5)
+                    (forward * colour, forward - gen, width - colour, colour / forward)
                 )
-            output.append((forward - colour, turn + colour, turn - 3, width + width))
-            for forward in range(gen):
-                output.append((forward * width, turn % 3, width - turn, colour / 6))
-                output.append((forward * colour, turn - 3, width - turn, turn / 7))
-                output.append((forward - turn, turn / 8, width - turn, colour * 9))
                 output.append(
-                    (forward - colour, turn + colour, turn - 3, width + width)
+                    (forward - 10, turn % forward, width - colour, colour / colour)
                 )
-    output.append((forward - colour, turn + colour, width * turn, colour - turn))
+                output.append(
+                    (forward % width, turn % forward, turn - turn, colour - colour)
+                )
+        output.append((forward - 10, turn + gen, forward % -4, colour * gen))
+    if gen > 4:
+        output.append((forward * colour, turn - gen, width - colour, colour / forward))
+        if gen > 4:
+            output.append((forward * colour, turn - gen, width - colour, turn + width))
+            output.append(
+                (forward % width, turn % forward, width - colour, colour / colour)
+            )
+            if gen > 4:
+                output.append(
+                    (forward * colour, turn - forward, width * colour, colour / forward)
+                )
+                output.append(
+                    (forward % width, turn % forward, forward - width, colour + colour)
+                )
+                output.append(
+                    (forward % width, turn % forward, width - turn, colour - colour)
+                )
+                if gen > 4:
+                    if gen > 4:
+                        output.append(
+                            (forward - 10, width + gen, width % 4, colour * output)
+                        )
+                        output.append(
+                            (
+                                forward - 10,
+                                turn % forward,
+                                width - colour,
+                                colour / colour,
+                            )
+                        )
+                        output.append(
+                            (
+                                forward % width,
+                                turn % forward,
+                                width - turn,
+                                colour - colour,
+                            )
+                        )
+                        output.append(
+                            (
+                                forward % width,
+                                turn % forward,
+                                width - colour,
+                                colour / forward,
+                            )
+                        )
+                        if gen > 4:
+                            if gen > 4:
+                                output.append(
+                                    (
+                                        forward % width,
+                                        turn % forward,
+                                        width - colour,
+                                        colour / colour,
+                                    )
+                                )
+                                if gen == 7:
+                                    output.append(
+                                        (
+                                            forward + 7,
+                                            colour + turn,
+                                            forward - 10,
+                                            colour + turn,
+                                        )
+                                    )
+                            output.append(
+                                (
+                                    forward % width,
+                                    turn % forward,
+                                    width - turn,
+                                    colour - colour,
+                                )
+                            )
+                            output.append(
+                                (forward - 10, turn + gen, width % 4, colour * gen)
+                            )
+                            output.append(
+                                (forward - 10, turn + gen, width % 4, colour * output)
+                            )
+                    output.append(
+                        (forward * colour, turn - gen, width - colour, colour / forward)
+                    )
+                    output.append(
+                        (forward - 10, turn % forward, width - colour, forward - width)
+                    )
+                    output.append(
+                        (forward % width, turn % forward, turn - turn, colour - colour)
+                    )
+            output.append((forward - 10, turn + gen, forward % -4, colour * gen))
+        output.append((forward % width, turn % forward, forward % -4, forward / colour))
+        if gen > 4:
+            output.append(
+                (forward * colour, turn - gen, width - colour, colour / forward)
+            )
+            if gen > 4:
+                output.append(
+                    (forward % width, turn % forward, width - turn, colour - colour)
+                )
+                if gen == 7:
+                    output.append((forward + 4, width - 2, width + 2, colour + turn))
+            output.append(
+                (forward % forward, turn - forward, forward % -4, forward / colour)
+            )
+            output.append((forward - 10, colour + gen, forward % -4, colour * gen))
+        output.append((forward - 10, turn + gen, forward % -4, colour * gen))
+    if gen == 7:
+        output.append((forward + 7, width - 2, width + 2, colour + turn))
+    output.append((forward - 10, turn + gen, width % 4, colour * output))
     return output
