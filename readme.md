@@ -1,8 +1,10 @@
 # Mutant Flowers
 
-The Python 3.9 `ast` library provides the new `unparse` convenience function, turning an AST back into readable code. As well as making it much easier to understand the impact of changes to an AST, it also allows something that was previously very difficult: A complete round trip from a function, to an AST, and then back to a function again which can be turned into an AST once more. In other words, it's now relatively straightforward to send code through multiple generations of changes using just the `ast` library. That gave me an idea. An extremely stupid idea.
+An abstract syntax tree, or AST, is a representation of the structure of a piece of code. It represents the operations that a piece of code performs as a kind of tree, with each operation represented by a "node". In Python, the `ast` library lets you parse your code into an AST, which lets you inspect or change code in a programmatic way. For example, a lot of IDEs use ASTs to do syntax highlighting and error checking. ASTs are also used by transpilers - converting code from one language to another.
 
-## Basic Flowers
+As of Python 3.9, the `ast` library also provides an `unparse` convenience function. This turns an AST back into readable code. As well as making it much easier to understand the impact of changes to an AST, it also allows something that was previously very difficult: A complete round trip from a function, to an AST, and then back to a function again which can be turned into an AST once more. In other words, it's now relatively straightforward to send code through multiple generations of changes using just the `ast` library. That gave me an idea. An extremely stupid idea.
+
+## Flowers
 
 I started by writing a few very simple functions for drawing flowers. 
 
