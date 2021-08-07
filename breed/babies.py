@@ -9,34 +9,9 @@ from breed.prune import prune
 from breed.fix_references import fix_references
 from breed.fix_empty_node_bodies import fix_empty_node_bodies
 from breed.random_function import random_function
+from breed.function_converter import FunctionConverter
 from copy import deepcopy
 from time import perf_counter
-
-
-class FunctionConverter:
-    def __init__(self):
-        self.namespace = {}
-        self.function_source = {}
-
-    def function_to_ast(self, function):
-        source = self.source_for_function(function)
-        return ast.parse(source).body[0]
-
-    def ast_to_function(self, function_ast):
-        n = NameGetter()
-        n.visit(function_ast)
-        basket = ast.Module([function_ast], [])
-        exec(compile(basket, filename="<ast>", mode="exec"), self.namespace)
-        source = ast.unparse(basket)
-        self.function_source[n.name] = source
-        return self.namespace[n.name]
-
-    def source_for_function(self, function):
-        try:
-            source = inspect.getsource(function)
-        except OSError:
-            source = self.function_source[function.__name__]
-        return source
 
 
 class BabyMaker:

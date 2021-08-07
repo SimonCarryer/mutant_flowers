@@ -55,8 +55,8 @@ if __name__ == "__main__":
         maker,
         fitness,
         n_generations=11,
-        starting_functions=600,
-        generation_size=80,
+        starting_functions=400,
+        generation_size=40,
         tournament_size=8,
         stopping_fitness=25,
     )
