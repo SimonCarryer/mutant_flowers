@@ -19,7 +19,10 @@ operators = [ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Mod]
 
 def random_function(name):
     args = build_args(names, defaults)
-    body = [build_assign_node(), expression(), build_return_node()]
+    if random.randint(0, 1) == 0:
+        body = [build_assign_node(), expression(), build_return_node()]
+    else:
+        body = [build_assign_node(), aug_assign(), expression(), build_return_node()]
     function = ast.FunctionDef(name=name, args=args, body=body, decorator_list=[])
     ast.fix_missing_locations(function)
     return function
@@ -86,7 +89,6 @@ def expression(extra_vars=None):
     value = random.choice(
         [
             append_tuple_to_output,
-            aug_assign,
             build_if,
             build_for,
         ]
@@ -119,7 +121,7 @@ def compare(extra_vars=None):
 
 def build_if(extra_vars=None):
     test = compare(extra_vars=extra_vars)
-    body = [expression(extra_vars=extra_vars)]
+    body = [append_tuple_to_output(extra_vars=extra_vars)]
     return ast.If(test=test, body=body, orelse=[])
 
 
@@ -129,7 +131,7 @@ def build_for(extra_vars=None):
     func = ast.Name(id="range", ctx=ast.Load())
     args = [var_or_constant(extra_vars=extra_vars)]
     iter_ = ast.Call(target=target, func=func, args=args, keywords=[])
-    body = [expression(extra_vars=[var_name])]
+    body = [append_tuple_to_output(extra_vars=[var_name])]
     return ast.fix_missing_locations(
         ast.For(target=target, iter=iter_, body=body, orelse=[])
     )

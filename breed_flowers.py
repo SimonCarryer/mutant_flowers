@@ -50,7 +50,7 @@ def draw_functions(functions):
 
 
 if __name__ == "__main__":
-    maker = BabyMaker(inject=1, crossover=1, mutate=1, prune=0.4)
+    maker = BabyMaker(inject=1, crossover=1, mutate=1, prune=0.6)
     breeder = Breeder(
         maker,
         fitness,
