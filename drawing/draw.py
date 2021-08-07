@@ -29,7 +29,6 @@ def interpret_output(t, forward, turn, width, colour, highlight=True):
 
 def draw_from_function(func, start=(0, 0), incremental=True):
     turtle.hideturtle()
-    turtle.tracer(0, 0)
     t = init_turtle(start)
     write_function_name(func.__name__, start)
     turtles = [t]
