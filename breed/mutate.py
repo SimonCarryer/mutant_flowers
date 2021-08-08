@@ -18,8 +18,8 @@ def mutate(child):
     child = deepcopy(child)
     counter = MutateCounter()
     counter.visit(child)
-    target = random.randint(0, counter.count)
-    mutator = Mutator(target, counter.names)
+    targets = random.sample(range(0, counter.count), 3)
+    mutator = Mutator(targets, counter.names)
     mutator.visit(child)
     return child
 
@@ -49,11 +49,11 @@ class MutateCounter(ast.NodeVisitor):
 
 
 class Mutator(ast.NodeTransformer):
-    def __init__(self, target_count, names):
+    def __init__(self, targets, names):
         super().__init__()
         self.names = names
         self.classes = classes
-        self.target_count = target_count
+        self.targets = targets
         self.count = 0
 
     def generic_visit(self, node):
@@ -63,7 +63,7 @@ class Mutator(ast.NodeTransformer):
         return node
 
     def visit_BinOp(self, node):
-        if self.count == self.target_count:
+        if self.count in self.targets:
             old_operator = node.op
             new_operator = random.choice(
                 [op for op in operators if op != old_operator.__class__]
@@ -73,7 +73,7 @@ class Mutator(ast.NodeTransformer):
         return node
 
     def visit_Constant(self, node):
-        if self.count == self.target_count:
+        if self.count in self.targets:
             value = node.value
             if value.__class__ == int:
                 roll = random.randint(0, 3)
@@ -89,7 +89,7 @@ class Mutator(ast.NodeTransformer):
         return node
 
     def visit_Compare(self, node):
-        if self.count == self.target_count:
+        if self.count in self.targets:
             old_ops = node.ops
             new_ops = []
             for old_op in old_ops:
@@ -103,7 +103,7 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Name(self, node):
         self.count += 1
-        if self.count == self.target_count:
+        if self.count in self.targets:
             names = [name for name in self.names if name != node.id]
             if len(names) > 0:
                 node.id = random.choice(names)

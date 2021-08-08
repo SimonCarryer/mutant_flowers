@@ -19,19 +19,19 @@ def inject(subject, donor):
 class InjectCollector(ast.NodeVisitor):
     def __init__(self):
         super().__init__()
-        self.collected_nodes = defaultdict(list)
+        self.collected_nodes = []
         self.target_fields = target_fields
 
     def generic_visit(self, node):
         for field, contents in ast.iter_fields(node):
             f = getattr(node, field)
             if field in self.target_fields and len(f) > 0:
-                self.collected_nodes[field] += f
+                self.collected_nodes += f
         super().generic_visit(node)
 
     def visit_FunctionDef(self, node):
         if len(node.body) > 2:
-            self.collected_nodes["body"] += node.body[1:-1]
+            self.collected_nodes += node.body[1:-1]
         super().generic_visit(node)
 
 
@@ -63,7 +63,7 @@ class Injector(ast.NodeTransformer):
             if field in self.target_fields and len(f) > 0:
                 self.count += 1
                 if self.count == self.target_count:
-                    new_node = random.choice(self.collected_nodes[field])
+                    new_node = random.choice(self.collected_nodes)
                     contents = getattr(node, field)
                     idx = random.randint(0, len(contents))
                     new_contents = contents[:idx] + [new_node] + contents[idx:]
@@ -77,7 +77,7 @@ class Injector(ast.NodeTransformer):
             if field in self.target_fields and len(f) > 0:
                 self.count += 1
                 if self.count == self.target_count:
-                    new_node = random.choice(self.collected_nodes[field])
+                    new_node = random.choice(self.collected_nodes)
                     contents = getattr(node, field)
                     idx = random.randint(1, len(contents) - 1)
                     new_contents = contents[:idx] + [new_node] + contents[idx:]

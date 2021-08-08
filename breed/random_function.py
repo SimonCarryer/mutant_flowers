@@ -122,7 +122,14 @@ def compare(extra_vars=None):
 def build_if(extra_vars=None):
     test = compare(extra_vars=extra_vars)
     body = [append_tuple_to_output(extra_vars=extra_vars)]
-    return ast.If(test=test, body=body, orelse=[])
+    orelse = random.choice(
+        [
+            [append_tuple_to_output(extra_vars=extra_vars)],
+            [aug_assign(extra_vars=extra_vars)],
+            [],
+        ]
+    )
+    return ast.If(test=test, body=body, orelse=orelse)
 
 
 def build_for(extra_vars=None):
