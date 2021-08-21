@@ -10,35 +10,9 @@ from drawing.util import (
 from breed.babies import BabyMaker
 from breed.breeder import Breeder
 from plants.plants import tree, daisy, cyclamen, foxglove
+from breed.fitness_functions import flower_like, naive, daisy_like, daisy_like_1
 
-
-def flower_like(outputs):
-    stem_length = 4
-    sizes = [len(o) for o in outputs]
-    # forwards = [max([o[0] for o in output]) if len(output) > 0 else 0 for output in outputs]
-    turns = [
-        max([o[1] for o in output]) if len(output) > 0 else 0 for output in outputs
-    ]
-    width = [
-        max([o[2] for o in output]) if len(output) > 0 else 0 for output in outputs
-    ]
-    # colours = [set([o[3] for o in output])  if len(output) > 0 else set() for output in outputs]
-    if any([s == 0 for s in sizes[:stem_length]]):
-        factor = 0.1
-    else:
-        factor = 1
-    size_of_stem = 0
-    size_of_flower = 0
-    shape_of_flower = 0
-    if len(sizes) > 0:
-        size_of_stem = sum(sizes[:stem_length])
-        size_of_flower = sum(sizes[stem_length:]) / 3
-        shape_of_flower = len(set(turns[stem_length:])) * 1.5
-    score = (size_of_flower + shape_of_flower) - size_of_stem
-    return max([score * factor, 0.1])
-
-
-fitness = flower_like
+fitness = daisy_like_1
 
 
 def draw_functions(functions):
@@ -50,14 +24,14 @@ def draw_functions(functions):
 
 
 if __name__ == "__main__":
-    maker = BabyMaker(inject=1, crossover=1, mutate=1, prune=0.6)
+    maker = BabyMaker(inject=1, crossover=1, mutate=1, prune=0.9)
     breeder = Breeder(
         maker,
         fitness,
         n_generations=11,
-        starting_functions=400,
-        generation_size=40,
-        tournament_size=8,
+        starting_functions=800,
+        generation_size=70,
+        tournament_size=3,
         stopping_fitness=25,
     )
     breeder.breed()
@@ -65,7 +39,7 @@ if __name__ == "__main__":
     set_up_screen()
     print(f"drawing {len(functions)} functions")
     draw_functions(functions)
-    for func in breeder.hall_of_fame():
+    for func in breeder.hall_of_fame()[-11:]:
         print(func, end="\n\n")
     while True:
         pass

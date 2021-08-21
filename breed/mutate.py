@@ -8,9 +8,7 @@ comparitors = [
     ast.Eq,
     ast.NotEq,
     ast.Lt,
-    ast.LtE,
     ast.Gt,
-    ast.GtE,
 ]
 
 
